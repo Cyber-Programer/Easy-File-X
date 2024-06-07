@@ -3,12 +3,17 @@ import platform
 
 def create_symbolic_link(src, dst):
     if os.path.exists(src):
-        if platform.system() == 'Linux':
+        if 'com.termux' in os.getenv('PREFIX', ''):
+            os.system(f'ln -s $(realpath {src}) $PREFIX/bin/efx')
+        elif platform.system() == 'Linux':
             os.system(f'chmod +x {src}')
             os.system(f'ln -s $(realpath {src}) {dst}')
-        elif 'com.termux' in os.getenv('PREFIX', ''):
-            os.system(f'ln -s $(realpath {src}) $PREFIX/bin/efx')
+        else:
+            print("Unsupported system.")
+    else:
+        print("Source file does not exist.")
 
-mianFile = 'efx.py'
+mainFile = 'efx.py'
+destination = '/usr/bin/efx'  # Default destination for Linux
 
-create_symbolic_link(mianFile, '/usr/bin/efx')
+create_symbolic_link(mainFile, destination)
